@@ -6,13 +6,11 @@
   <title>บอกรัก (ฉบับตื้อ)</title>
   <style>
     :root {
-      --bg: #fff9fa;
+      --bg-start: #ffd6e8;  /* สีชมพูอ่อน */
+      --bg-end: #ffffff;    /* สีขาว */
       --card: #fff;
-      --accent: #e75480; /* สีชมพูอมม่วงอ่อนลง */
+      --accent: #f3a6b1; /* สีชมพูอ่อน */
       --muted: #444;
-      --button-yes-bg: linear-gradient(90deg, #f6a5b8, #e75480);
-      --button-no-bg: #f0f0f0;
-      --button-no-border: #ccc;
     }
     * {
       box-sizing: border-box;
@@ -23,16 +21,16 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background: linear-gradient(135deg, #fff9fa 0%, #fff4f7 100%);
+      background: linear-gradient(135deg, var(--bg-start) 0%, var(--bg-end) 100%);
       font-family: system-ui, -apple-system, Segoe UI, Roboto, 'Noto Sans Thai', sans-serif;
       color: var(--muted);
     }
     .card {
       width: min(720px, 92vw);
       background: var(--card);
-      padding: 28px;
+      padding: 28px 28px 40px;
       border-radius: 16px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
       text-align: center;
       position: relative;
     }
@@ -40,10 +38,14 @@
       margin: 0 0 8px;
       font-size: 28px;
       color: #222;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
     }
     p.lead {
       margin: 0 0 20px;
-      color: #555;
+      color: #444;
     }
     .heart {
       font-size: 42px;
@@ -51,7 +53,12 @@
       display: inline-block;
       transform: translateY(0);
       transition: transform 0.25s;
-      user-select: none;
+    }
+    .icon-top {
+      width: 72px;
+      height: 72px;
+      margin: 0 auto 18px;
+      display: block;
     }
     .buttons {
       display: flex;
@@ -67,31 +74,29 @@
       border-radius: 999px;
       font-weight: 600;
       cursor: pointer;
-      font-size: 16px;
-      transition: background-color 0.3s, box-shadow 0.3s;
+      background: #eee;
       user-select: none;
+      font-size: 14px;
+      transition: background 0.3s, color 0.3s;
     }
     .yes {
-      background: var(--button-yes-bg);
-      color: white;
-      box-shadow: 0 6px 12px rgba(231, 84, 128, 0.35);
+      background: linear-gradient(90deg, #f3a6b1, #e88392);
+      color: #4b2c32;
+      box-shadow: 0 6px 14px rgba(227, 131, 146, 0.25);
       transform: translateY(0);
-      transition: transform 0.18s, box-shadow 0.3s;
+      transition: transform 0.18s;
     }
-    .yes:hover {
-      box-shadow: 0 8px 16px rgba(231, 84, 128, 0.5);
-      transform: translateY(-3px);
+    .yes:hover:not(:disabled) {
+      filter: brightness(1.1);
     }
     .no {
-      background: var(--button-no-bg);
-      border: 2px solid var(--button-no-border);
+      background: #fafafa;
+      border: 2px solid #ccc;
       color: #666;
-      font-weight: 600;
+      position: relative;
     }
-    .no:hover {
-      background: #e8e8e8;
-      border-color: #bbb;
-      color: #444;
+    .no:hover:not(:disabled) {
+      background: #f0f0f0;
     }
     .small {
       font-size: 14px;
@@ -101,7 +106,6 @@
       font-size: 13px;
       margin-top: 10px;
       color: #777;
-      user-select: none;
     }
     /* modal */
     .overlay {
@@ -110,8 +114,8 @@
       display: none;
       align-items: center;
       justify-content: center;
-      background: rgba(0, 0, 0, 0.28);
-      backdrop-filter: blur(3px);
+      background: rgba(0, 0, 0, 0.35);
+      z-index: 10;
     }
     .modal {
       background: var(--card);
@@ -119,4 +123,168 @@
       border-radius: 12px;
       max-width: 420px;
       text-align: center;
-      box-shadow: 0 8px 30px rgba(0, 0,
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18);
+    }
+    .confetti {
+      pointer-events: none;
+      position: fixed;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      overflow: hidden;
+      z-index: 9;
+    }
+    /* responsive */
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 22px;
+      }
+      .buttons {
+        height: 100px;
+      }
+      .icon-top {
+        width: 48px;
+        height: 48px;
+        margin-bottom: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="card" id="card">
+    <!-- รูปน่ารักบนสุด -->
+    <svg class="icon-top" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" stroke="#f3a6b1" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M32 58s26-15 26-34a14 14 0 0 0-28 0 14 14 0 0 0-28 0c0 19 26 34 26 34z"/>
+    </svg>
+
+    <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:6px">
+      <span class="heart" id="heart">❤</span>
+      <h1>พี่อยากถามอะไรนะ...</h1>
+    </div>
+    <p class="lead">จะรับรักพี่ไหม? (ตอบตามจริงนะ หรือจะให้พี่ตื้อก็ได้)</p>
+
+    <div class="buttons" id="btnArea">
+      <button class="no small" id="noBtn">ไม่รัก</button>
+      <button class="yes small" id="yesBtn">รัก</button>
+    </div>
+    <div class="meta">กด <em>ไม่รัก</em> ไปเรื่อยๆ ก็อาจจะมีผล... ลองดู 😉</div>
+  </div>
+
+  <div class="overlay" id="overlay" role="dialog" aria-modal="true">
+    <div class="modal" id="modal">
+      <h2>ในที่สุดก็ได้คำตอบแล้ว 💖</h2>
+      <p id="modalText">พี่ก็รักเหมือนกัน 💕</p>
+      <div style="margin-top:14px">
+        <button class="yes small" id="modalOk">โอเค</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="confetti" id="confetti"></div>
+
+  <script>
+    const noBtn = document.getElementById('noBtn');
+    const yesBtn = document.getElementById('yesBtn');
+    const overlay = document.getElementById('overlay');
+    const modalOk = document.getElementById('modalOk');
+    const heart = document.getElementById('heart');
+    const btnArea = document.getElementById('btnArea');
+
+    let noClicks = 0;
+    const MAX_CLICKS_TO_FORCE = 7; // หลังจากกดครั้งที่ 7 จะบังคับ yes
+
+    noBtn.addEventListener('mouseenter', () => {
+      if (noClicks < MAX_CLICKS_TO_FORCE - 2) moveNoButton();
+    });
+
+    noBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      noClicks++;
+      noBtn.animate([{ transform: 'translateY(0)' }, { transform: 'translateY(-6px)' }, { transform: 'translateY(0)' }], { duration: 220 });
+
+      if (noClicks >= MAX_CLICKS_TO_FORCE) {
+        forceYes();
+      } else if (noClicks >= MAX_CLICKS_TO_FORCE - 2) {
+        noBtn.textContent = 'คิดอีกที...';
+      } else {
+        const msgs = ['ไม่ใช่หรอ?', 'จริงเหรอ?', 'งั้นสิ?', 'ลองอีกที!'];
+        noBtn.textContent = msgs[noClicks % msgs.length] + ' / ไม่รัก';
+      }
+    });
+
+    yesBtn.addEventListener('click', showModal);
+    modalOk.addEventListener('click', hideModal);
+
+    function moveNoButton() {
+      const area = btnArea.getBoundingClientRect();
+      const btnRect = noBtn.getBoundingClientRect();
+      const padding = 8;
+      const maxX = Math.max(0, area.width - btnRect.width - padding);
+      const maxY = Math.max(0, area.height - btnRect.height - padding);
+      const x = Math.floor(Math.random() * maxX);
+      const y = Math.floor(Math.random() * maxY);
+      noBtn.style.position = 'absolute';
+      noBtn.style.left = x + 'px';
+      noBtn.style.top = y + 'px';
+    }
+
+    function forceYes() {
+      noBtn.disabled = true;
+      noBtn.style.opacity = 0.6;
+      noBtn.style.cursor = 'not-allowed';
+
+      yesBtn.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.12)' }, { transform: 'scale(1)' }], { duration: 420 });
+      setTimeout(() => {
+        showModal();
+      }, 420);
+    }
+
+    function showModal() {
+      overlay.style.display = 'flex';
+      heart.animate([{ transform: 'translateY(0)' }, { transform: 'translateY(-8px)' }, { transform: 'translateY(0)' }], { duration: 400, iterations: 3 });
+      launchConfetti();
+    }
+
+    function hideModal() {
+      overlay.style.display = 'none';
+      stopConfetti();
+    }
+
+    let confettiInterval;
+    function launchConfetti() {
+      const el = document.getElementById('confetti');
+      el.innerHTML = '';
+      confettiInterval = setInterval(() => {
+        const c = document.createElement('div');
+        c.style.position = 'absolute';
+        c.style.left = Math.random() * 100 + '%';
+        c.style.top = '-10px';
+        c.style.width = Math.floor(Math.random() * 10 + 6) + 'px';
+        c.style.height = c.style.width;
+        c.style.opacity = Math.random() * 0.9 + 0.2;
+        c.style.borderRadius = '2px';
+        const colors = ['#f3a6b1', '#ffd36b', '#7ef0c7', '#9ac8ff'];
+        c.style.background = colors[Math.floor(Math.random() * colors.length)];
+        c.style.transform = 'rotate(' + Math.floor(Math.random() * 360) + 'deg)';
+        el.appendChild(c);
+        const duration = 3000 + Math.random() * 2000;
+        c.animate([{ transform: 'translateY(0px)' }, { transform: 'translateY(120vh) rotate(360deg)' }], { duration: duration, iterations: 1 }).onfinish = () => { c.remove() }
+      }, 120);
+    }
+    function stopConfetti() {
+      clearInterval(confettiInterval);
+    }
+
+    window.addEventListener('resize', () => {
+      const area = btnArea.getBoundingClientRect();
+      const btnRect = noBtn.getBoundingClientRect();
+      if (parseInt(noBtn.style.left || 0) + btnRect.width > area.width) {
+        noBtn.style.left = '';
+        noBtn.style.top = '';
+        noBtn.style.position = '';
+      }
+    });
+  </script>
+</body>
+</html>
